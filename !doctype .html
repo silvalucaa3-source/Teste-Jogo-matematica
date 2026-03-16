@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MathMaster - 1ª Série</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* Mesmo estilo do original, mantido intacto */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f3f4f6;
+      padding: 20px;
+      font-family: var(--font-body);
+      color: var(--color-text-primary);
+    }
+    :root {
+      --color-primary: #6366F1;
+      --color-primary-light: #818CF8;
+      --color-primary-lighter: #E0E7FF;
+      --color-primary-dark: #4F46E5;
+      --color-success: #10B981;
+      --color-success-light: #D1FAE5;
+      --color-warning: #F59E0B;
+      --color-warning-light: #FEF3C7;
+      --color-error: #EF4444;
+      --color-error-light: #FEE2E2;
+      --color-info: #3B82F6;
+      --color-bg-primary: #FFFFFF;
+      --color-bg-secondary: #F9FAFB;
+      --color-bg-tertiary: #F3F4F6;
+      --color-text-primary: #111827;
+      --color-text-secondary: #6B7280;
+      --color-text-tertiary: #9CA3AF;
+      --color-border: #E5E7EB;
+      --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --spacing-xl: 32px;
+      --spacing-2xl: 48px;
+      --font-display: 'Sora', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+    @keyframes slide-in { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
+    @keyframes fade-in { from { opacity:0; } to { opacity:1; } }
+    @keyframes bounce-in { 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.05); } }
+    @keyframes float { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-8px); } }
+    @keyframes shake { 0%,100%{ transform:translateX(0); } 25%{ transform:translateX(-5px); } 75%{ transform:translateX(5px); } }
+
+    .animate-slide-in { animation: slide-in 0.3s ease-out; }
+    .animate-fade-in { animation: fade-in 0.3s ease-out; }
+    .animate-bounce-in { animation: bounce-in 0.5s ease-out; }
+    .animate-float { animation: float 3s ease-in-out infinite; }
+    .shake { animation: shake 0.3s ease-in-out; }
+    .red-border { border: 2px solid var(--color-error) !important; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 24px; border-radius: 12px; font-weight: 600; border: none;
+      cursor: pointer; transition: all 0.2s ease; font-size: 14px;
+    }
+    .btn-primary { background: var(--color-primary); color: white; box-shadow: var(--shadow-md); }
+    .btn-primary:hover { background: var(--color-primary-dark); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-secondary { background: var(--color-bg-tertiary); color: var(--color-text-primary); border: 2px solid var(--color-border); }
+    .btn-secondary:hover { background: var(--color-bg-secondary); border-color: var(--color-primary); }
+    .btn-sm { padding: 8px 16px; font-size: 12px; }
+    .btn-icon { width: 40px; height: 40px; padding: 0; border-radius: 10px; }
+
+    .card { background: white; border: 1px solid var(--color-border); border-radius: 16px; padding: 16px; box-shadow: var(--shadow-sm); transition: all 0.2s ease; }
+    .card:hover { box-shadow: var(--shadow-md); border-color: var(--color-primary-lighter); }
+
+    .badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .badge-success { background: var(--color-success-light); color: var(--color-success); }
+    .badge-warning { background: var(--color-warning-light); color: var(--color-warning); }
+    .badge-error { background: var(--color-error-light); color: var(--color-error); }
+    .badge-primary { background: var(--color-primary-lighter); color: var(--color-primary-dark); }
+
+    .device-frame {
+      position: relative; width: 100%; max-width: 390px; aspect-ratio: 390/844;
+      background: white; border-radius: 40px; border: 12px solid #000;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; display: flex; flex-direction: column;
+    }
+    .device-notch {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 150px; height: 28px; background: #000; border-radius: 0 0 20px 20px; z-index: 10;
+    }
+    .device-content { flex: 1; overflow-y: auto; padding-top: 12px; display: flex; flex-direction: column; height: 100%; }
+
+    .screen { display: none; flex: 1; overflow-y: auto; animation: fade-in 0.3s ease-out; }
+    .screen.active { display: flex; flex-direction: column; }
+    .screen-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; padding: 20px; gap: 16px; }
+
+    .header { display: flex; align-items: center; justify-content: space-between; padding: 0 20px; height: 56px; border-bottom: 1px solid var(--color-border); }
+    .header-title { font-size: 18px; font-weight: 700; color: var(--color-text-primary); }
+
+    .bottom-nav {
+      display: flex; align-items: center; justify-content: space-around; padding: 12px 0;
+      border-top: 1px solid var(--color-border); background: var(--color-bg-secondary); height: 64px;
+    }
+    .nav-item {
+      display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer;
+      color: var(--color-text-tertiary); transition: all 0.2s ease; font-size: 10px; font-weight: 600;
+    }
+    .nav-item.active { color: var(--color-primary); }
+    .nav-item i { width: 24px; height: 24px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+      border-radius: 20px; padding: 24px; color: white; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; right: -50px; top: -50px; width: 200px; height: 200px;
+      background: rgba(255,255,255,0.1); border-radius: 50%;
+    }
+    .hero-content { position: relative; z-index: 1; }
+    .hero h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .hero p { font-size: 13px; opacity: 0.9; }
+
+    .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .stat-card { background: var(--color-bg-secondary); border-radius: 12px; padding: 12px; text-align: center; }
+    .stat-value { font-size: 20px; font-weight: 700; color: var(--color-primary); }
+    .stat-label { font-size: 11px; color: var(--color-text-secondary); margin-top: 4px; }
+
+    .lesson-card {
+      border-radius: 16px; padding: 16px; background: var(--color-bg-secondary);
+      border: 2px solid transparent; cursor: pointer; transition: all 0.2s ease;
+      position: relative; overflow: hidden;
+    }
+    .lesson-card::before {
+      content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--color-primary);
+    }
+    .lesson-card.completed::before { background: var(--color-success); }
+    .lesson-card:hover { border-color: var(--color-primary); transform: translateY(-4px); }
+    .lesson-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px; }
+    .lesson-title { font-size: 14px; font-weight: 600; color: var(--color-text-primary); }
+    .lesson-meta { font-size: 12px; color: var(--color-text-secondary); margin-top: 4px; }
+
+    .progress-bar { width: 100%; height: 8px; background: var(--color-bg-tertiary); border-radius: 4px; overflow: hidden; margin-top: 12px; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-light) 100%); transition: width 0.3s ease; }
+
+    .input {
+      width: 100%; padding: 12px 16px; border: 2px solid var(--color-border); border-radius: 12px;
+      font-size: 14px; font-family: var(--font-body); transition: all 0.2s ease;
+    }
+    .input:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-lighter); }
+    .input::placeholder { color: var(--color-text-tertiary); }
+
+    .modal-overlay {
+      display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-content {
+      background: white; border-radius: 20px; max-width: 340px; width: 100%;
+      animation: slide-in 0.3s ease-out; box-shadow: var(--shadow-lg);
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid var(--color-border); }
+    .modal-title { font-size: 16px; font-weight: 700; }
+    .modal-body { padding: 20px; max-height: 60vh; overflow-y: auto; }
+    .modal-footer { padding: 16px 20px; border-top: 1px solid var(--color-border); display: flex; gap: 12px; }
+    .close-btn { background: none; border: none; cursor: pointer; color: var(--color-text-secondary); width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
+
+    .step-indicator { display: flex; gap: 8px; margin-bottom: 12px; }
+    .step { flex: 1; height: 4px; background: var(--color-bg-tertiary); border-radius: 2px; overflow: hidden; }
+    .step.active { background: var(--color-primary); }
+    .step.completed { background: var(--color-success); }
+
+    .result-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 40px 20px; }
+    .result-icon { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; }
+    .result-icon.success { background: var(--color-success-light); color: var(--color-success); animation: bounce-in 0.6s ease-out; }
+    .result-icon.error { background: var(--color-error-light); color: var(--color-error); animation: bounce-in 0.6s ease-out; }
+
+    .xp-popup {
+      position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%);
+      background: var(--color-success); color: white; padding: 12px 24px; border-radius: 20px;
+      font-weight: 700; display: none; animation: float 0.8s ease-out; z-index: 200;
+    }
+    .xp-popup.show { display: block; }
+
+    .tabs { display: flex; gap: 8px; border-bottom: 2px solid var(--color-bg-tertiary); overflow-x: auto; margin-bottom: 16px; }
+    .tab { padding: 12px 16px; border: none; background: none; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--color-text-secondary); border-bottom: 3px solid transparent; transition: all 0.2s ease; white-space: nowrap; }
+    .tab.active { color: var(--color-primary); border-bottom-color: var(--color-primary); }
+
+    .achievement { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; background: var(--color-bg-secondary); border-radius: 12px; text-align: center; }
+    .achievement-icon { width: 48px; height: 48px; background: var(--color-primary-lighter); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+    .achievement-name { font-size: 12px; font-weight: 600; color: var(--color-text-primary); }
+    .achievement-desc { font-size: 10px; color: var(--color-text-secondary); }
+
+    .screen-content::-webkit-scrollbar { width: 4px; }
+    .screen-content::-webkit-scrollbar-track { background: transparent; }
+    .screen-content::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 2px; }
+    .screen-content::-webkit-scrollbar-thumb:hover { background: var(--color-text-tertiary); }
+
+    @media (max-width: 480px) {
+      .device-frame { max-width: 100%; border-radius: 20px; border-width: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="device-frame">
+    <div class="device-notch"></div>
+    <div class="device-content" id="deviceContent">
+      <!-- SCREEN 1: Onboarding -->
+      <div class="screen active" data-screen="onboarding">
+        <div class="screen-content">
+          <div style="text-align: center; padding: 20px 0;">
+            <div style="font-size: 60px; margin-bottom: 16px;">🐶</div>
+            <h1 style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">Matemática Divertida</h1>
+            <p style="color: var(--color-text-secondary); font-size: 14px; line-height: 1.5;">Vamos aprender a contar, somar, subtrair e comparar números!</p>
+          </div>
+          <div style="flex: 1;"></div>
+          <div style="gap: 12px; display: flex; flex-direction: column;">
+            <button class="btn btn-primary" style="width: 100%;" onclick="startLearning()"> 
+              <i data-lucide="play"></i> Começar a Brincar 
+            </button>
+          </div>
+          <div class="step-indicator">
+            <div class="step completed"></div>
+            <div class="step"></div>
+            <div class="step"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN 2: Home -->
+      <div class="screen" data-screen="home">
+        <div class="header">
+          <div class="header-title">MathMaster 1ª Série</div>
+          <div style="display: flex; gap: 12px;">
+            <button class="btn btn-icon btn-secondary" onclick="navigate('notifications')" style="background: none; border: none;"> 
+              <i data-lucide="bell" style="width: 20px; height: 20px;"></i> 
+            </button>
+            <button class="btn btn-icon btn-secondary" onclick="navigate('settings')" style="background: none; border: none;"> 
+              <i data-lucide="settings" style="width: 20px; height: 20px;"></i> 
+            </button>
+          </div>
+        </div>
+        <div class="screen-content">
+          <div class="hero">
+            <div class="hero-content">
+              <h2 style="font-size: 20px; margin-bottom: 4px;">Olá, pequeno gênio! 👋</h2>
+              <p>Vamos praticar hoje?</p>
+            </div>
+          </div>
+          <div class="stats-row">
+            <div class="stat-card"><div class="stat-value" id="xpTotal">0</div><div class="stat-label">Estrelas</div></div>
+            <div class="stat-card"><div class="stat-value" id="streak">0</div><div class="stat-label">Dias seguidos</div></div>
+            <div class="stat-card"><div class="stat-value" id="accuracy">0%</div><div class="stat-label">Acertos</div></div>
+          </div>
+          <div style="padding-top: 8px;">
+            <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 12px;">Escolha um assunto</h3>
+            <div class="lesson-card" onclick="setTopic('contagem')">
+              <div class="lesson-header">
+                <div><div class="lesson-title">Contagem até 50</div><div class="lesson-meta">Descubra o próximo número</div></div>
+                <div class="badge badge-primary"><i data-lucide="star"></i> 10 XP</div>
+              </div>
+            </div>
+            <div class="lesson-card" onclick="setTopic('adicao')">
+              <div class="lesson-header">
+                <div><div class="lesson-title">Adição simples</div><div class="lesson-meta">Somar números pequenos</div></div>
+                <div class="badge badge-primary"><i data-lucide="star"></i> 10 XP</div>
+              </div>
+            </div>
+            <div class="lesson-card" onclick="setTopic('subtracao')">
+              <div class="lesson-header">
+                <div><div class="lesson-title">Subtração simples</div><div class="lesson-meta">Diminuir números</div></div>
+                <div class="badge badge-primary"><i data-lucide="star"></i> 10 XP</div>
+              </div>
+            </div>
+            <div class="lesson-card" onclick="setTopic('comparacao')">
+              <div class="lesson-header">
+                <div><div class="lesson-title">Comparação de números</div><div class="lesson-meta">Qual é maior ou menor?</div></div>
+                <div class="badge badge-primary"><i data-lucide="star"></i> 10 XP</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item active" onclick="navigate('home')"><i data-lucide="home"></i> <span>Home</span></div>
+          <div class="nav-item" onclick="navigate('progress')"><i data-lucide="trending-up"></i> <span>Progresso</span></div>
+          <div class="nav-item" onclick="navigate('profile')"><i data-lucide="user"></i> <span>Perfil</span></div>
+        </div>
+      </div>
+
+      <!-- SCREEN 3: Lesson (apenas para mostrar o tópico selecionado) -->
+      <div class="screen" data-screen="lesson">
+        <div class="header">
+          <button class="btn btn-icon btn-secondary" onclick="navigate('home')" style="background: none; border: none;"> 
+            <i data-lucide="arrow-left" style="width: 20px; height: 20px;"></i> 
+          </button>
+          <div class="header-title" id="lessonTitle">Contagem</div>
+          <div style="width: 40px;"></div>
+        </div>
+        <div class="screen-content">
+          <div id="lessonContent" style="background: var(--color-primary-lighter); border-radius: 16px; padding: 20px; border-left: 4px solid var(--color-primary);">
+            <p>Vamos treinar! Clique no botão para começar os exercícios.</p>
+          </div>
+          <button class="btn btn-primary" style="width: 100%; margin-top: 16px;" onclick="startExercise()"> 
+            <i data-lucide="play"></i> Começar Exercícios 
+          </button>
+        </div>
+      </div>
+
+      <!-- SCREEN 4: Exercise -->
+      <div class="screen" data-screen="exercise">
+        <div class="header">
+          <button class="btn btn-icon btn-secondary" onclick="navigate('lesson')" style="background: none; border: none;"> 
+            <i data-lucide="arrow-left" style="width: 20px; height: 20px;"></i> 
+          </button>
+          <div class="header-title" id="exerciseHeader">Exercício</div>
+          <div style="width: 40px;"></div>
+        </div>
+        <div class="screen-content">
+          <div class="progress-bar"><div class="progress-fill" style="width: 40%;" id="exerciseProgress"></div></div>
+          <div style="background: var(--color-bg-secondary); border-radius: 16px; padding: 20px;">
+            <div style="font-size: 12px; color: var(--color-text-secondary); margin-bottom: 8px;" id="questionTopicLabel">Pergunta:</div>
+            <div id="questionText" style="font-family: 'Courier New', monospace; font-size: 20px; font-weight: 700; text-align: center; color: var(--color-primary-dark); padding: 20px; background: white; border-radius: 12px; border: 2px solid var(--color-border);">
+              2 + 3 = ?
+            </div>
+            <div style="font-size: 12px; color: var(--color-text-secondary); margin-top: 12px; text-align: center;">
+              <button style="background: none; border: none; color: var(--color-primary); cursor: pointer; font-weight: 600; font-size: 12px;" onclick="openHintModal()"> 💡 Precisa de ajuda? </button>
+            </div>
+          </div>
+          <div style="gap: 8px; display: flex; flex-direction: column;">
+            <label style="font-size: 12px; font-weight: 600;">Sua resposta:</label> 
+            <input type="text" class="input" placeholder="Digite o número" id="answerInput">
+            <div style="font-size: 11px; color: var(--color-text-secondary);" id="inputExample">Ex: 5</div>
+          </div>
+          <div style="flex: 1;"></div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-secondary" style="flex: 1;" onclick="showSolution()" id="showSolutionBtn">Ver solução</button>
+            <button class="btn btn-primary" style="flex: 1;" onclick="submitAnswer()"> 
+              <i data-lucide="check"></i> Verificar 
+            </button>
+          </div>
+          <div id="hintMessage" style="font-size: 12px; color: var(--color-primary); text-align: center; min-height: 20px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN 5: Feedback (resultado) -->
+      <div class="screen" data-screen="feedback">
+        <div class="header">
+          <div style="width: 40px;"></div>
+          <div class="header-title">Resultado</div>
+          <button class="btn btn-icon btn-secondary" onclick="navigate('home')" style="background: none; border: none;"> 
+            <i data-lucide="x" style="width: 20px; height: 20px;"></i> 
+          </button>
+        </div>
+        <div class="screen-content" style="justify-content: center;">
+          <div class="result-container">
+            <div class="result-icon" id="resultIcon">✓</div>
+            <div style="text-align: center;">
+              <h2 style="font-size: 20px; font-weight: 700;" id="resultTitle">Parabéns!</h2>
+              <p style="font-size: 14px; color: var(--color-text-secondary);" id="resultMessage">Resposta correta!</p>
+            </div>
+            <div style="width: 100%; background: var(--color-success-light); border-radius: 16px; padding: 20px; text-align: center;" id="xpGainedBox">
+              <div style="font-size: 13px; color: var(--color-success); margin-bottom: 8px;">Você ganhou</div>
+              <div style="font-size: 32px; font-weight: 700; color: var(--color-success);" id="xpGained">+ 10 ⭐</div>
+              <div style="font-size: 12px; color: var(--color-success); opacity: 0.8;" id="nextLevel">Continue assim!</div>
+            </div>
+            <div style="width: 100%; gap: 8px; display: flex; flex-direction: column;" id="feedbackDetails">
+              <!-- Detalhes inseridos via JS -->
+            </div>
+            <button class="btn btn-primary" style="width: 100%;" id="feedbackActionBtn" onclick="feedbackAction()"> 
+              <i data-lucide="chevron-right"></i> Próximo Exercício 
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Outras telas (simplificadas) -->
+      <div class="screen" data-screen="progress">
+        <div class="header">
+          <div class="header-title">Meu Progresso</div>
+          <button class="btn btn-icon btn-secondary" onclick="navigate('home')" style="background: none; border: none;"> 
+            <i data-lucide="home"></i>
+          </button>
+        </div>
+        <div class="screen-content">
+          <p>Você já ganhou <span id="totalStars">0</span> estrelas!</p>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item" onclick="navigate('home')"><i data-lucide="home"></i> <span>Home</span></div>
+          <div class="nav-item active" onclick="navigate('progress')"><i data-lucide="trending-up"></i> <span>Progresso</span></div>
+          <div class="nav-item" onclick="navigate('profile')"><i data-lucide="user"></i> <span>Perfil</span></div>
+        </div>
+      </div>
+
+      <div class="screen" data-screen="profile">
+        <div class="header">
+          <div class="header-title">Meu Perfil</div>
+          <button class="btn btn-icon btn-secondary" onclick="navigate('home')" style="background: none; border: none;"> 
+            <i data-lucide="home"></i>
+          </button>
+        </div>
+        <div class="screen-content">
+          <p>Nome: Estudante</p>
+          <p>Nível: 1ª série</p>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item" onclick="navigate('home')"><i data-lucide="home"></i> <span>Home</span></div>
+          <div class="nav-item" onclick="navigate('progress')"><i data-lucide="trending-up"></i> <span>Progresso</span></div>
+          <div class="nav-item active" onclick="navigate('profile')"><i data-lucide="user"></i> <span>Perfil</span></div>
+        </div>
+      </div>
+
+      <div class="screen" data-screen="notifications">
+        <div class="header">
+          <button class="btn btn-icon btn-secondary" onclick="navigate('home')" style="background: none; border: none;"> 
+            <i data-lucide="arrow-left"></i>
+          </button>
+          <div class="header-title">Notificações</div>
+          <div style="width:40px;"></div>
+        </div>
+        <div class="screen-content">
+          <p>Nenhuma notificação nova.</p>
+        </div>
+      </div>
+
+      <div class="screen" data-screen="settings">
+        <div class="header">
+          <button class="btn btn-icon btn-secondary" onclick="navigate('home')" style="background: none; border: none;"> 
+            <i data-lucide="arrow-left"></i>
+          </button>
+          <div class="header-title">Configurações</div>
+          <div style="width:40px;"></div>
+        </div>
+        <div class="screen-content">
+          <p>Configurações simples.</p>
+        </div>
+      </div>
+
+      <!-- Modal de dica -->
+      <div class="modal-overlay" id="hintModal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div class="modal-title">💡 Dica</div>
+            <button class="close-btn" onclick="closeHintModal()"><i data-lucide="x"></i></button>
+          </div>
+          <div class="modal-body" id="hintModalBody">
+            <!-- dica aqui -->
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" style="flex:1;" onclick="closeHintModal()">Fechar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Popup de estrelas -->
+      <div class="xp-popup" id="xpPopup">+10 ⭐</div>
+    </div>
+  </div>
+
+  <script>
+    // ========== ESTADO GLOBAL ==========
+    let session = {
+      id: 'sessao_' + Math.random().toString(36).substr(2, 9),
+      user_level: 'beginner', // para 1ª série
+      stars: 0,
+      streak: 0,
+      accuracy: 0,
+      totalAnswered: 0,
+      totalCorrect: 0
+    };
+    let currentQuestion = null;
+    let attempts = 0;
+    const maxAttemptsBeforeSolution = 2;
+    let currentTopic = 'contagem'; // padrão
+
+    // Inicializa ícones
+    lucide.createIcons();
+
+    function startLearning() {
+      navigate('home');
+    }
+
+    function setTopic(topic) {
+      currentTopic = topic;
+      let title = '';
+      if (topic === 'contagem') title = 'Contagem até 50';
+      else if (topic === 'adicao') title = 'Adição simples';
+      else if (topic === 'subtracao') title = 'Subtração simples';
+      else if (topic === 'comparacao') title = 'Comparação de números';
+      document.getElementById('lessonTitle').innerText = title;
+      document.getElementById('lessonContent').innerHTML = `<p>Vamos praticar ${title.toLowerCase()}! Clique no botão para começar.</p>`;
+      navigate('lesson');
+    }
+
+    function startExercise() {
+      generateQuestion();
+      navigate('exercise');
+    }
+
+    // ========== GERADOR DE QUESTÕES ==========
+    function generateQuestion() {
+      let question = {};
+      const topic = currentTopic;
+      const maxNum = 50; // para contagem e comparação
+      const maxOperand = 20; // para adição/subtração (resultados até 20)
+
+      if (topic === 'contagem') {
+        // "Qual número vem depois de X?" (X entre 1 e 49)
+        const base = Math.floor(Math.random() * 49) + 1; // 1 a 49
+        const correct = base + 1;
+        question = {
+          session_id: session.id,
+          question_id: 'q_' + Date.now(),
+          question_text: `Qual número vem depois de ${base}?`,
+          input_type: 'number',
+          correct_answer: correct,
+          metadata: { topic, difficulty: 1 },
+          ui_suggestions: { error_animation: 'shake', show_confetti_on_correct: true },
+          tolerance: 0,
+          topicLabel: 'Contagem'
+        };
+      } else if (topic === 'adicao') {
+        // a + b = ?, com a e b entre 1 e 10, resultado <= 20
+        const a = Math.floor(Math.random() * 10) + 1;
+        const b = Math.floor(Math.random() * (11 - (a > 10 ? 10 - a : 10))) + 1; // garante <=20
+        const correct = a + b;
+        question = {
+          session_id: session.id,
+          question_id: 'q_' + Date.now(),
+          question_text: `${a} + ${b} = ?`,
+          input_type: 'number',
+          correct_answer: correct,
+          metadata: { topic, difficulty: 1 },
+          ui_suggestions: { error_animation: 'shake', show_confetti_on_correct: true },
+          tolerance: 0,
+          topicLabel: 'Adição'
+        };
+      } else if (topic === 'subtracao') {
+        // a - b = ?, com a entre 5 e 20, b entre 1 e a-1, resultado >=0
+        const a = Math.floor(Math.random() * 16) + 5; // 5 a 20
+        const b = Math.floor(Math.random() * (a - 1)) + 1; // 1 a a-1
+        const correct = a - b;
+        question = {
+          session_id: session.id,
+          question_id: 'q_' + Date.now(),
+          question_text: `${a} - ${b} = ?`,
+          input_type: 'number',
+          correct_answer: correct,
+          metadata: { topic, difficulty: 1 },
+          ui_suggestions: { error_animation: 'shake', show_confetti_on_correct: true },
+          tolerance: 0,
+          topicLabel: 'Subtração'
+        };
+      } else if (topic === 'comparacao') {
+        // "Qual número é maior: A ou B?" ou "Qual é o menor?" - vamos fazer "Qual é maior?"
+        const a = Math.floor(Math.random() * 50) + 1;
+        let b = Math.floor(Math.random() * 50) + 1;
+        while (b === a) b = Math.floor(Math.random() * 50) + 1; // evitar igual
+        const correct = a > b ? a : b;
+        // Pergunta: "Qual é o maior número: A ou B?" e a resposta é o valor do maior
+        question = {
+          session_id: session.id,
+          question_id: 'q_' + Date.now(),
+          question_text: `Qual é o maior número: ${a} ou ${b}?`,
+          input_type: 'number',
+          correct_answer: correct,
+          metadata: { topic, difficulty: 1 },
+          ui_suggestions: { error_animation: 'shake', show_confetti_on_correct: true },
+          tolerance: 0,
+          topicLabel: 'Comparação'
+        };
+      }
+
+      currentQuestion = question;
+      
+      // Atualiza a tela
+      document.getElementById('questionTopicLabel').innerText = question.topicLabel + ':';
+      document.getElementById('questionText').innerText = question.question_text;
+      document.getElementById('inputExample').innerText = 'Digite um número';
+      document.getElementById('hintMessage').innerText = '';
+      document.getElementById('answerInput').value = '';
+      document.getElementById('answerInput').classList.remove('shake', 'red-border');
+      document.getElementById('showSolutionBtn').style.display = 'block'; // visível
+      attempts = 0;
+    }
+
+    // ========== SUBMISSÃO ==========
+    function submitAnswer() {
+      const userAnswer = parseFloat(document.getElementById('answerInput').value.trim());
+      if (isNaN(userAnswer)) {
+        alert('Digite um número válido.');
+        return;
+      }
+      
+      const correct = Math.abs(userAnswer - currentQuestion.correct_answer) <= (currentQuestion.tolerance || 0);
+      
+      // Atualiza estatísticas
+      session.totalAnswered++;
+      if (correct) {
+        session.totalCorrect++;
+        session.stars += 10; // cada acerto vale 10 estrelas
+        session.streak++;
+        updateStats();
+        handleCorrect();
+      } else {
+        session.streak = 0; // perdeu a sequência
+        attempts++;
+        updateStats();
+        handleIncorrect(userAnswer);
+      }
+    }
+
+    function updateStats() {
+      document.getElementById('xpTotal').innerText = session.stars;
+      document.getElementById('streak').innerText = session.streak;
+      const accuracy = session.totalAnswered > 0 ? Math.round((session.totalCorrect / session.totalAnswered) * 100) : 0;
+      session.accuracy = accuracy;
+      document.getElementById('accuracy').innerText = accuracy + '%';
+      document.getElementById('totalStars').innerText = session.stars;
+    }
+
+    function handleCorrect() {
+      // Popup de estrelas
+      const popup = document.getElementById('xpPopup');
+      popup.innerText = `+10 ⭐`;
+      popup.classList.add('show');
+      setTimeout(() => popup.classList.remove('show'), 2000);
+      
+      // Confetti visual
+      if (currentQuestion.ui_suggestions.show_confetti_on_correct) {
+        document.getElementById('feedbackActionBtn').style.backgroundColor = 'var(--color-success)';
+        setTimeout(() => document.getElementById('feedbackActionBtn').style.backgroundColor = '', 500);
+      }
+      
+      // Prepara tela de feedback
+      document.getElementById('resultIcon').className = 'result-icon success';
+      document.getElementById('resultIcon').innerText = '✓';
+      document.getElementById('resultTitle').innerText = 'Parabéns!';
+      document.getElementById('resultMessage').innerText = 'Resposta correta!';
+      document.getElementById('xpGained').innerHTML = '+10 ⭐';
+      document.getElementById('nextLevel').innerText = 'Continue brilhando!';
+      
+      let detailsHtml = `
+        <div style="background: var(--color-bg-secondary); border-radius: 12px; padding: 12px;">
+          <div style="font-size: 11px; color: var(--color-text-secondary); margin-bottom: 4px;">SUA RESPOSTA</div>
+          <div style="font-size: 14px; font-weight: 600; color: var(--color-primary-dark);">${document.getElementById('answerInput').value} ✓</div>
+        </div>
+      `;
+      // Se for comparação, podemos mostrar explicação
+      if (currentQuestion.metadata.topic === 'comparacao') {
+        detailsHtml += `
+          <div style="background: var(--color-bg-secondary); border-radius: 12px; padding: 12px;">
+            <div style="font-size: 11px; color: var(--color-text-secondary); margin-bottom: 4px;">EXPLICAÇÃO</div>
+            <div style="font-size: 13px;">O maior número é ${currentQuestion.correct_answer}.</div>
+          </div>
+        `;
+      } else {
+        detailsHtml += `
+          <div style="background: var(--color-bg-secondary); border-radius: 12px; padding: 12px;">
+            <div style="font-size: 11px; color: var(--color-text-secondary); margin-bottom: 4px;">MUITO BEM!</div>
+            <div style="font-size: 13px;">Você acertou! Continue assim.</div>
+          </div>
+        `;
+      }
+      document.getElementById('feedbackDetails').innerHTML = detailsHtml;
+      document.getElementById('feedbackActionBtn').innerHTML = '<i data-lucide="chevron-right"></i> Próximo Exercício';
+      document.getElementById('feedbackActionBtn').onclick = function() { 
+        navigate('exercise'); 
+        generateQuestion(); 
+      };
+      
+      navigate('feedback');
+    }
+
+    function handleIncorrect(userAnswer) {
+      const input = document.getElementById('answerInput');
+      input.classList.add(currentQuestion.ui_suggestions.error_animation);
+      setTimeout(() => input.classList.remove(currentQuestion.ui_suggestions.error_animation), 300);
+      
+      let hint = '';
+      if (attempts === 1) {
+        if (currentQuestion.metadata.topic === 'contagem') {
+          hint = 'Dica: depois de ' + (currentQuestion.correct_answer - 1) + ' vem ' + currentQuestion.correct_answer + '.';
+        } else if (currentQuestion.metadata.topic === 'adicao') {
+          hint = 'Dica: você pode contar nos dedos!';
+        } else if (currentQuestion.metadata.topic === 'subtracao') {
+          hint = 'Dica: pense em tirar ' + (currentQuestion.question_text.split(' ')[2]) + ' de ' + (currentQuestion.question_text.split(' ')[0]) + '.';
+        } else if (currentQuestion.metadata.topic === 'comparacao') {
+          const nums = currentQuestion.question_text.match(/\d+/g).map(Number);
+          hint = `Dica: compare ${nums[0]} e ${nums[1]}. Qual é maior?`;
+        }
+      } else if (attempts >= 2) {
+        hint = 'Quer ver a solução? Clique em "Ver solução".';
+        document.getElementById('showSolutionBtn').style.display = 'block';
+      }
+      document.getElementById('hintMessage').innerText = hint;
+    }
+
+    function showSolution() {
+      let steps = [];
+      if (currentQuestion.metadata.topic === 'contagem') {
+        steps = [`O número depois de ${currentQuestion.correct_answer - 1} é ${currentQuestion.correct_answer}.`];
+      } else if (currentQuestion.metadata.topic === 'adicao') {
+        const parts = currentQuestion.question_text.split(' ');
+        const a = parseInt(parts[0]);
+        const b = parseInt(parts[2]);
+        steps = [`Primeiro, pegue ${a} e adicione ${b}.`, `Conte: ${a} + 1 = ${a+1}, +2 = ${a+2} ... até ${a+b} = ${currentQuestion.correct_answer}.`];
+      } else if (currentQuestion.metadata.topic === 'subtracao') {
+        const parts = currentQuestion.question_text.split(' ');
+        const a = parseInt(parts[0]);
+        const b = parseInt(parts[2]);
+        steps = [`Comece com ${a} e tire ${b}.`, `Você fica com ${a} - ${b} = ${currentQuestion.correct_answer}.`];
+      } else if (currentQuestion.metadata.topic === 'comparacao') {
+        const nums = currentQuestion.question_text.match(/\d+/g).map(Number);
+        const maior = Math.max(...nums);
+        steps = [`Compare ${nums[0]} e ${nums[1]}.`, `${maior} é maior.`];
+      }
+      
+      let stepsHtml = steps.map(s => `<div style="margin-bottom: 8px;">${s}</div>`).join('');
+      document.getElementById('hintModalBody').innerHTML = `
+        <div style="font-weight: 700; margin-bottom: 12px;">Solução:</div>
+        ${stepsHtml}
+        <div style="margin-top: 12px;">Resposta: ${currentQuestion.correct_answer}</div>
+      `;
+      document.getElementById('hintModal').classList.add('active');
+      lucide.createIcons();
+    }
+
+    function openHintModal() {
+      let hintText = '';
+      if (attempts === 0) {
+        hintText = 'Pense com calma, você consegue!';
+      } else {
+        hintText = document.getElementById('hintMessage').innerText || 'Tente novamente!';
+      }
+      document.getElementById('hintModalBody').innerHTML = `<p>${hintText}</p>`;
+      document.getElementById('hintModal').classList.add('active');
+      lucide.createIcons();
+    }
+
+    function closeHintModal() {
+      document.getElementById('hintModal').classList.remove('active');
+    }
+
+    function feedbackAction() {
+      // Definido dinamicamente
+    }
+
+    // Navegação
+    function navigate(screenName) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const target = document.querySelector(`[data-screen="${screenName}"]`);
+      if (target) target.classList.add('active');
+      else document.querySelector('[data-screen="home"]').classList.add('active');
+      lucide.createIcons();
+    }
+
+    // Fechar modal ao clicar fora
+    document.getElementById('hintModal').addEventListener('click', function(e) {
+      if (e.target === this) closeHintModal();
+    });
+
+    // Inicializa estatísticas
+    updateStats();
+  </script>
+</body>
+</html>
